@@ -1,0 +1,109 @@
+/*
+ * styleC.css	// Extra Credit
+ * ----------
+ * Laura Cruz-Albrecht | 1/18/17
+ * Contains styling featuring the following:
+ *	1. transitions
+ *	2. shadows
+ * Elements are pink and purple shadowed circles in the bottom of the screen.
+ * Hovering over a circle triggers an expansion transition: the circle and font
+ * both expand, both change color, and the font glows white.
+ *
+ * Sources (shadowing and transitions):
+ *		https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
+ *		http://www.w3schools.com/css/css3_shadows.asp
+ *		http://learn.shayhowe.com/advanced-html-css/transitions-animations/
+ */
+
+body, html, .container {
+	height: 100%;
+	width: 100%;
+	background-color: #aaddff;
+}
+
+/* 
+ * Specifies horizontal flex layout for elements, with equal and 
+ * dynamic spacing 
+ */
+.container {
+	display: flex;	/* default: row, as desired */
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+}
+
+/* 
+ * Basic styling for each element: creates circle with cursive font.
+ * Also adds shadow to each circle, and specifies transition properties:
+ * namely, the features that will change on mouse hover, and how long
+ * the transition should take when triggered
+ */
+.basic_box {
+	width: 100px;
+	height: 100px;
+	flex-shrink: 0;
+
+	text-align: center;	
+	vertical-align: middle;
+	line-height: 100px;
+
+	padding: 10px;
+	font: Tahoma;
+	font-family: cursive;
+	font-size: 40px;
+
+	margin: 20px;
+
+	border: bevel #D0D0FF 10px;
+
+	border-radius: 50%;
+
+	/* 
+	 * Transition properties: background color, element size, font size,
+	 * and font positioning will all be affected by mouse hover. Transition
+	 * will take 1 second, and progress in a linear fashion
+	 */
+	transition-property: background, width, height, font-size, line-height;
+  	transition-duration: 1s;
+  	transition-timing-function: linear;
+
+  	/* adds shadow: offset-x offset-y blur-radius color */
+  	box-shadow: 10px 10px 5px #888888;
+
+}
+
+/* alternates background and font color of circles */
+.basic_box:nth-child(odd) {
+	background-color: #FF66FF;
+	color: #B366FF;
+}
+
+.basic_box:nth-child(even) {
+	background-color: #B366FF;
+	color: #FF66FF;
+}
+
+/* change box/font colors and cursor symbol on box hover */
+.basic_box:hover {
+
+	/* adds text shadow (white glow) */
+	text-shadow: 0 0 8px white;
+
+
+	/* Specifies how transition properties should change on hover */
+	 /* change circle color and font color */
+	background-color: #ffd106;
+	color: darkslateblue;
+
+	/* expand circle */
+	width: 150px;
+	height: 150px;
+
+	/* expand font, keep centered */
+	font-size: 100px;
+	line-height: 150px;
+
+}
+
+
+

@@ -1,0 +1,52 @@
+/*
+ * styleB.css
+ * ----------
+ * Laura Cruz-Albrecht | 1/18/17
+ * Contains styling for part B of the assignment: color/size styling applied 
+ * to the boxes, and they are arranged such that first five are horizontally
+ * arranged in the top left of the screen, and the last is in the lower right
+ * corner of the screen and moves as the window resizes. Hovering over boxes
+ * changes mouse to hand, and alters box and font color.
+ *
+ * Sources: lecture notes, piazza, flexbox documentation, stackoverflow
+ *  - http://stackoverflow.com/questions/33114716/pin-element-flex-item-to-bottom-of-container
+ */
+
+.container {
+	display: flex;	/* default: row layout, as desired */
+}
+
+/* 
+ * basic styling for boxes: sets box and font size and color, adds dotted
+ * border to left of boxes, and adds 10 pixels of margin and padding
+ */
+.basic_box {
+	width: 100px;
+	height: 150px;
+	flex-shrink: 0;	/* box size remains fixed */
+
+	font: Tahoma;
+	font-family: sans-serif;
+	font-size: 40px;
+
+	text-align: left;
+	padding: 10px;
+	margin: 5px;	/* add 5px margin on both sides to get 10 pixels of spacing */
+
+	background-color: #eeeff2;
+	border-left: dotted #D0D0FF 10px;
+}
+
+/* special treatment for box F: pin to lower right corner */
+.basic_box:last-child {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+/* change box/font colors and cursor symbol on box hover */
+.basic_box:hover {
+	background-color: yellow;
+	color: goldenrod;	/* font color */
+	cursor: pointer;	/* cursor becomes hand */
+}

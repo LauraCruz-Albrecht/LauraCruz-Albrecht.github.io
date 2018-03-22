@@ -1,0 +1,73 @@
+/*
+ * styleA.css
+ * ----------
+ * Laura Cruz-Albrecht | 1/18/17
+ * Contains styling for part A of the assignment: specifies the style
+ * for each box, such that the boxes are centered horizontally and arranged 
+ * vertically in alternating colors. The last box is uniquely colored and has
+ * a border. Spacing between the boxes expands/contracts with the window size.
+ *
+ * Sources: lecture notes, piazza, flexbox documentation, stackoverflow
+ *  - http://stackoverflow.com/questions/33030880/css-center-and-vertical-alignment
+ */
+
+html, body, .container {
+	height: 100%;
+	overflow: hidden;	/* remove scrollbar */
+}
+
+/*
+ * styling for container holding the boxes: uses columnar
+ * flexbox display with spacing around elements (so that space
+ * adjusts between elements as window resizes)
+ */
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center; 
+	justify-content: space-around;
+}
+
+/* 
+ * basic styling for all boxes: sets size, center aligns text,
+ * sets font properties, adds upper border
+ */
+.basic_box {
+	width: 100px;
+	height: 100px;
+	flex-shrink: 0;	/* box size remains fixed */
+
+	text-align: center;
+	font: Tahoma;
+	font-family: sans-serif;
+	font-family: Tahoma;
+
+	font-size: 40px;
+	border-top: solid #687291 1px;
+
+	display: inline-block;	/* helps keeps boxes vertical */
+	white-space: nowrap;
+}
+
+/* sets alternating colors for odd and even boxes */
+.basic_box:nth-child(odd) {
+	background-color: #dfe1e7;
+
+}
+
+.basic_box:nth-child(even) {
+	background-color: #eeeff2;
+
+}
+
+/* special styling for last box */
+.basic_box:last-child {
+	background-color: #687291;
+	border: solid black 4px;
+	line-height: 100px;		/* vertically center text */
+	margin-bottom: 30px;	/* spacing between last box and bottom of window */
+}
+
+.basic_box:first-child {
+	margin-top: 18px;		/* spacing between top of window and 1st box */
+}
