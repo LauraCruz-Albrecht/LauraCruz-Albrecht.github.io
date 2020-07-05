@@ -110,8 +110,10 @@ figure {
     width: 100%; 
 
     /* laura, to make box smaller */
-    padding-left: 20%;
-    padding-top: 10%;
+    padding-left: 30%;
+    /*padding-top: 1%;*/
+    /*margin-bottom: 1em;*/
+
     }
     @media screen and (max-width: 768px) {
       #colorlib-aside #colorlib-logo {
@@ -196,6 +198,7 @@ figure {
     bottom: 40px;
     right: 1.5em;
     left: 1.5em;
+    
     /*font-size: 15px;*/
     /*laura*/
     font-size: 10px;
@@ -1176,3 +1179,13 @@ body.offcanvas {
     height: inherit !important;
     float: left;
     padding-top: 30px; } }
+
+/* laura more styling */
+/*#wooden-safe {
+  scroll-behavior: smooth;
+}
+
+html {
+  scroll-behavior: smooth;
+}*/
+
