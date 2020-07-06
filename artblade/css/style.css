@@ -118,7 +118,8 @@ figure {
     @media screen and (max-width: 768px) {
       #colorlib-aside #colorlib-logo {
         margin-bottom: 1em; } }
-    #colorlib-aside #colorlib-logo a {
+        
+    /*#colorlib-aside #colorlib-logo a {
       display: inline-block;
       text-align: center;
       background: #000;
@@ -129,7 +130,8 @@ figure {
       #colorlib-aside #colorlib-logo a span {
         display: block;
         margin-bottom: 5px;
-        text-align: center; }
+        text-align: center; }*/
+
   #colorlib-aside #colorlib-main-menu ul {
     text-align: right;
     margin: 0;
