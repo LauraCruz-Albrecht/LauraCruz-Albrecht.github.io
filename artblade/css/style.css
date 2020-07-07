@@ -82,7 +82,11 @@ figure {
   bottom: 0;
   top: 0;
   left: 0;
-  overflow-y: scroll;
+  /*overflow-y: scroll;*/
+
+  /* laura: so that scrollbar doesn't show if not needed */
+  overflow-y: auto;
+
   z-index: 1001;
   background: #fff;
   -webkit-transition: 0.5s;
@@ -197,7 +201,10 @@ figure {
 
   #colorlib-aside .colorlib-footer {
     position: absolute;
-    bottom: 40px;
+    /*bottom: 40px;*/
+    /* laura: make footer text lower */
+    bottom: 1.5em;
+
     right: 1.5em;
     left: 1.5em;
     
