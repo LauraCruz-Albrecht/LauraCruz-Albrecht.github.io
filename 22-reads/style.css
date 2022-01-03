@@ -1,0 +1,94 @@
+/*
+ * styleB.css
+ * ----------
+ * Laura Cruz-Albrecht | 1/18/17
+ * Contains styling for part B of the assignment: color/size styling applied 
+ * to the boxes, and they are arranged such that first five are horizontally
+ * arranged in the top left of the screen, and the last is in the lower right
+ * corner of the screen and moves as the window resizes. Hovering over boxes
+ * changes mouse to hand, and alters box and font color.
+ *
+ * Sources: lecture notes, piazza, flexbox documentation, stackoverflow
+ *  - http://stackoverflow.com/questions/33114716/pin-element-flex-item-to-bottom-of-container
+ */
+
+.header {
+	width: 75%;
+	margin: auto; /* center horizontally */
+	text-align: center;
+	font-family: "papyrus";
+	color: #876464; /* font color */
+	padding-top: 20px;
+}
+
+.container {
+	display: flex;	/* default: row layout, as desired */
+	flex-wrap: wrap; /* allow wrapping */
+	width: 75%;
+	padding: 10px;
+	margin: auto; /* center horizontally */
+
+}
+
+/* 
+ * basic styling for boxes: sets box and font size and color, adds dotted
+ * border to left of boxes, and adds 10 pixels of margin and padding
+ */
+.box {
+	width: 200px;
+	height: 300px;
+
+	flex-shrink: 0;	/* box size remains fixed */
+
+	font: Tahoma;
+	font-family: sans-serif;
+	font-size: 20px;
+
+	text-align: left;
+	padding: 10px;
+	margin: 5px;	/* add 5px margin on both sides to get 10 pixels of spacing */
+
+	background-color: #eeeff2;
+	/*border-left: dotted #D0D0FF 10px;*/
+
+	background: LV.JPG 50% 50% no-repeat;
+}
+
+/* change box/font colors and cursor symbol on box hover */
+.box:hover {
+	cursor: pointer;	/* cursor becomes hand */
+	background-color: #ffe79a;
+	color: #876464; /* font color */
+}
+
+
+.box .image {
+	object-fit: cover;
+    width:200px;
+    height:300px;
+    opacity: 1;
+    transition: opacity .5s ease-in-out;
+
+    position: absolute;
+}
+.box .text {
+	opacity:0;
+	font-family: "papyrus";
+	padding:10px;
+}
+
+.box .text h2 {
+	margin-top:0;
+}
+
+.box .text p {
+	font-size: 18px;
+}
+
+.box:hover .image {
+	opacity:1; /* change to 0 to fade out and show text */
+}
+
+.box:hover .text {
+	opacity:1;
+}
