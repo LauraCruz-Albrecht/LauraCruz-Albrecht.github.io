@@ -1,0 +1,64 @@
+/*
+ * style.css
+ * ----------
+ * Laura Cruz-Albrecht | 2022-01-03
+ * styling for 22reads
+ */
+
+
+.container {
+	margin: auto; /* center horizontally */
+	margin-top:30px;
+	text-align: center;
+	font-family: "Annie Use Your Telescope";
+	font-size: 20px;
+	color: #876464; /* font color */
+}
+
+p {
+	margin: 10px;
+}
+
+h1 {
+	margin-bottom: 10px;
+}
+
+.book_container {
+	width: 90%;
+	margin: auto;  /* center horizontally */
+	display: flex;	/* default: row layout, as desired */
+	flex-wrap: wrap; /* allow wrapping */
+	justify-content: center;
+	margin-top:30px;
+}
+
+.box {
+	width: 100px;
+	height: 150px;
+	flex-shrink: 0;	/* box size remains fixed */
+	padding: 10px;
+	margin: 5px;
+	background-color: #eeeff2;
+	text-align: left;
+}
+
+.box .image {
+	object-fit: cover;
+    width:100px;
+    height:150px;
+    opacity: 0.25; /* initially image faded. set to 1 if "read" */
+    position: absolute;
+}
+
+/* set image to full opacity instead of partial if it is read */
+.box.read .image {
+	opacity: 1;
+}
+
+.box.read {
+	background-color: #D0F0C0; /* tea green */
+}
+
+.box .text {
+	padding: 2px;
+}
