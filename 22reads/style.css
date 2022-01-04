@@ -1,10 +1,16 @@
 body {
 	margin: auto; /* center horizontally */
+
+	/* additional margin mainly for mobile */
 	margin-top:30px;
+	margin-left: 30px;
+	margin-right: 30px;
+	margin-bottom: 30px;
+
 	text-align: center;
 	font-family: "Annie Use Your Telescope";
 	font-size: 20px;
-	color: #876464; /* font color */
+	color: #876464; /* font color */	
 }
 
 p {
