@@ -16,8 +16,11 @@
 	margin: auto; /* center horizontally */
 	text-align: center;
 	padding-top: 20px;
-	font-family: "papyrus";
+	/*font-family: "papyrus";*/
+	font-family: "Annie Use Your Telescope";
 	color: #876464; /* font color */
+
+	font-size: 18px;
 }
 
 .container {
@@ -30,8 +33,11 @@
 	align-items: flex-start;
 	justify-content: center;
 
-	font-family: "papyrus";
+	/*font-family: "papyrus";*/
+	font-family: "Annie Use Your Telescope";
 	color: #876464; /* font color */
+
+	font-size: 18px;
 }
 
 /* 
@@ -47,7 +53,7 @@
 	background-color: #eeeff2;
 
 	text-align: left;
-	font-size: 16px;
+	font-size: 18px;
 }
 
 /* change box/font colors and cursor symbol on box hover */
@@ -81,5 +87,5 @@
 
 .box .text h2 {
 	margin-top:0;
-	font-size:16px;
+	/*font-size:18px;*/
 }
