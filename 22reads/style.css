@@ -1,12 +1,4 @@
-/*
- * style.css
- * ----------
- * Laura Cruz-Albrecht | 2022-01-03
- * styling for 22reads
- */
-
-
-.container {
+body {
 	margin: auto; /* center horizontally */
 	margin-top:30px;
 	text-align: center;
@@ -60,5 +52,5 @@ h1 {
 }
 
 .box .text {
-	padding: 2px;
+	padding-left: 2px;
 }
