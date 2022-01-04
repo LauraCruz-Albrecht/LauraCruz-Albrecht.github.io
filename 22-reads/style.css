@@ -13,21 +13,25 @@
  */
 
 .header {
-	width: 75%;
 	margin: auto; /* center horizontally */
 	text-align: center;
+	padding-top: 20px;
 	font-family: "papyrus";
 	color: #876464; /* font color */
-	padding-top: 20px;
 }
 
 .container {
+	width: 90%;
 	display: flex;	/* default: row layout, as desired */
 	flex-wrap: wrap; /* allow wrapping */
-	width: 75%;
 	padding: 10px;
 	margin: auto; /* center horizontally */
 
+	align-items: flex-start;
+	justify-content: center;
+
+	font-family: "papyrus";
+	color: #876464; /* font color */
 }
 
 /* 
@@ -35,60 +39,47 @@
  * border to left of boxes, and adds 10 pixels of margin and padding
  */
 .box {
-	width: 200px;
-	height: 300px;
-
+	width: 100px;
+	height: 150px;
 	flex-shrink: 0;	/* box size remains fixed */
-
-	font: Tahoma;
-	font-family: sans-serif;
-	font-size: 20px;
+	padding: 10px;
+	margin: 5px;
+	background-color: #eeeff2;
 
 	text-align: left;
-	padding: 10px;
-	margin: 5px;	/* add 5px margin on both sides to get 10 pixels of spacing */
-
-	background-color: #eeeff2;
-	/*border-left: dotted #D0D0FF 10px;*/
-
-	background: LV.JPG 50% 50% no-repeat;
+	font-size: 16px;
 }
 
 /* change box/font colors and cursor symbol on box hover */
-.box:hover {
-	cursor: pointer;	/* cursor becomes hand */
+/*.box.read:hover {
+	cursor: pointer;
 	background-color: #ffe79a;
-	color: #876464; /* font color */
-}
-
+}*/
 
 .box .image {
 	object-fit: cover;
-    width:200px;
-    height:300px;
-    opacity: 1;
+    width:100px;
+    height:150px;
+    opacity: 0.25; /* initially image faded. set to 1 if "read" */
     transition: opacity .5s ease-in-out;
-
     position: absolute;
 }
+
+.box.read {
+	/*background-color: #ffe79a;*/ /* yellow */
+	background-color: #D0F0C0; /* tea green */
+}
+
+.box.read .image {
+	opacity: 1;
+}
+
 .box .text {
-	opacity:0;
-	font-family: "papyrus";
-	padding:10px;
+	opacity:1;
+	padding: 2px;
 }
 
 .box .text h2 {
 	margin-top:0;
-}
-
-.box .text p {
-	font-size: 18px;
-}
-
-.box:hover .image {
-	opacity:1; /* change to 0 to fade out and show text */
-}
-
-.box:hover .text {
-	opacity:1;
+	font-size:16px;
 }
