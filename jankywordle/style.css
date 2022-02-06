@@ -1,0 +1,85 @@
+.container {
+  margin: auto;
+  text-align: center;
+  font-family: "Comfortaa";
+}
+
+/* for the jankywordle title: match cell colors */
+.green {
+  color: #6AAA64;
+}
+.yellow {
+  color: #C9B458;
+}
+.grey {
+  color: #787C7E;
+}
+
+.row {
+  display: flex;  /* default: row layout, as desired */
+  justify-content: center;
+}
+
+/* styles cells from current month (bright) */
+.cell {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0; /* box size remains fixed */
+
+  font-family: "Comfortaa";
+  font-size: 18px;
+  font-weight: bold;
+
+  display: inline-flex;
+  align-items: center;
+  text-align: center; 
+  justify-content: center;
+
+  padding: 5px;
+  margin: 2px;  
+
+  background-color: white;
+  border: solid #DCDCDC 2px;
+}
+
+button {
+  width: 30px;
+  height: 45px;
+  flex-shrink: 0; /* box size remains fixed */
+
+  font-family: "Comfortaa";
+  font-size: 12px;
+  font-weight: bold;
+
+  display: inline-flex;
+  align-items: center;
+  text-align: center; 
+  justify-content: center;
+
+  padding: 5px;
+  margin: 2px;  
+  border: 0px;
+  border-radius: 4px;
+
+  background-color: #DCDCDC;
+}
+
+#enter_button {
+  width: 50px;
+  font-size: 10px;
+  background-color: #C0C0C0;
+}
+
+#del_button {
+  width: 50px;
+  background-color: #C0C0C0;
+}
+
+button:hover {
+  cursor: pointer;  /* cursor becomes hand */
+}
+
+#message {
+  font-size: 13px;
+  height: 13px;
+}
