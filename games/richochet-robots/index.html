@@ -1,0 +1,384 @@
+
+<!-- source: https://github.com/end3r/Gamedev-Canvas-workshop/blob/gh-pages/lesson09.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Gamedev Canvas Workshop - lesson 9: mouse controls</title>
+    <style>
+        * { 
+            padding: 0;
+            margin: 0; 
+        } 
+        canvas { 
+            background: #c4b7a6;
+            display: block; 
+            margin: 0 auto; 
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="600" height="600"></canvas>
+
+<script>
+    // future improvement ideas:
+    // don't allow dragging robot onto existing robot
+    // don't allow dragging into cell without obstacle
+
+    // ------ CONSTANTS ------------------------------
+    const SAND = '#c4b7a6';
+    const CREAM = 'white';
+    const RED = '#dc143c';
+    const GREEN = '#228b22';
+    const BLUE = '#318ce7';
+    const YELLOW = '#f5c71a';
+
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+
+    const CELL_ROW_COUNT = 16;
+    const CELL_OFFSET = 3;
+    const CELL_PADDING = 1;
+    const CELL_WIDTH = (canvas.width - CELL_PADDING*(CELL_ROW_COUNT - 1) - CELL_OFFSET*2) / CELL_ROW_COUNT;
+    const WALL_WIDTH = 5;
+    // invalid destinations/positions
+    const CENTER_CELLS = [[7, 7], [7, 8], [8, 7], [8, 8]];
+
+    const DESTINATIONS = {
+        RED:    {'♣':[1, 11],  '♥': [11, 13], '♠': [3, 1],   '♦': [12, 4]},
+        GREEN:  {'♣':[1, 4],   '♥': [9, 5],   '♠': [3, 14],  '♦': [10, 11]},
+        BLUE:   {'♣':[10, 1],  '♥': [4, 9],   '♠': [12, 10], '♦': [6, 3]},
+        YELLOW: {'♣':[13, 12], '♥': [5, 5],   '♠': [14, 6],  '♦': [6, 12]}
+    };
+    const DEST_COORDS = getDestCoords(); // array of [r, c] dest coords
+    const SYMBOLS = ['♣', '♠', '♥', '♦'];
+    const COLORS = ['RED', 'GREEN', 'BLUE', 'YELLOW'];
+
+    const VERT_WALLS = [  // (row, col, lift)
+        [0, 2, true], [0, 9, true], [1, 5, true], [1, 11, true], [3, 1, false],
+        [3, 15, true], [4, 10, false], [5, 5, true], [6, 4, false], [6, 12, false],
+        [8, 3, false], [9, 5, false], [10, 2, false], [10, 11, true], [11, 13, false],
+        [12, 5, true], [12, 11, true], [13, 13, false], [14, 6, true], [15, 4, false], 
+        [15, 10, false]
+    ];
+    const HOR_WALLS = [
+        [1, 4, false], [1, 11, true], [2, 15, false], [3, 14, false], [4, 1, true],
+        [5, 5, true], [5, 9, false], [6, 0, true], [7, 3, false], [7, 12, true],
+        [8, 2, false], [10, 5, true], [10, 11, true], [11, 1, false], [12, 4, false],
+        [12, 10, false], [12, 13, true], [12, 15, false], [13, 0, true], [14, 6, true],
+        [14, 12, false]  
+    ];
+
+
+    // ------ FUNCTIONS ------------------------------
+    function getBannedMoves() {
+        // initialize empty 2D array
+        var bannedMoves = new Array(CELL_ROW_COUNT);
+        for (var r = 0; r < CELL_ROW_COUNT; r++) {
+            bannedMoves[r] = new Array(CELL_ROW_COUNT);
+            for (var c = 0; c < CELL_ROW_COUNT; c++) {
+                bannedMoves[r][c] = {};
+            }
+        }
+
+        // now, populate ban as needed based on wall placement
+        for (const w of VERT_WALLS) {
+            const [r, c, _] = w;
+            console.log(r, c);
+            // the (r, c) coords are to the right of the wall
+            // for that cell and cell to the left, need to ban adjacent col
+            // row stays the same
+            bannedMoves[r][c].c = c-1;
+            bannedMoves[r][c-1].c = c;
+        }
+
+        for (const w of HOR_WALLS) {
+            const [r, c, _] = w;
+            console.log(r, c);
+            // the (r, c) coords are below the wall
+            // for that cell and cell above, need to ban adjacent row
+            // col stays the same
+            bannedMoves[r][c].r = r-1;
+            bannedMoves[r-1][c].r = r;
+        }
+
+        console.log('banned', bannedMoves);
+        return bannedMoves;
+    }
+
+    // handlers
+    document.addEventListener("mousedown", mouseDownHandler, false);
+    document.addEventListener("mouseup", mouseUpHandler, false);
+    document.addEventListener("mousemove", mouseMoveHandler, false);
+
+    function maybeGetRobotAt(r, c) {
+        for (const [colorStr, coords] of Object.entries(robots)) {
+            if (coords.r === r && coords.c === c) return colorStr;
+        }
+        return 'NONE';
+    }
+
+    function mouseDownHandler(e) {
+        console.log('mousedown');
+        var r = Math.floor((e.clientY - canvas.offsetTop) / (CELL_WIDTH + CELL_PADDING));
+        var c = Math.floor((e.clientX - canvas.offsetLeft) / (CELL_WIDTH + CELL_PADDING));
+        // update the active robot
+        activeRobot = maybeGetRobotAt(r, c);
+        console.log(activeRobot);
+    }
+
+    function mouseUpHandler(e) {
+        console.log('mouseup');
+        activeRobot = 'NONE';
+    }
+
+    function mouseMoveHandler(e) {
+        console.log('mousemove', activeRobot);
+        var r = Math.floor((e.clientY - canvas.offsetTop) / (CELL_WIDTH + CELL_PADDING));
+        var c = Math.floor((e.clientX - canvas.offsetLeft) / (CELL_WIDTH + CELL_PADDING));
+        // out of bounds
+        if (r < 0 || r >= CELL_ROW_COUNT || c < 0 || c >= CELL_ROW_COUNT) return;
+        // can't go on central cells
+        if (JSON.stringify(CENTER_CELLS).indexOf(JSON.stringify([r, c])) !== -1) return;
+        
+        if (activeRobot !== 'NONE') {
+            // check if is valid move
+            var currR = robots[activeRobot].r;
+            var currC = robots[activeRobot].c;
+
+            var currBanned = bannedMoves[currR][currC];
+            if (currBanned.r === r || currBanned.c === c) {
+                console.log('BANNED', currBanned, r, c);
+                return;
+            }
+
+            // only let it go to adjacent row/col
+            if (Math.abs(r - currR) > 1 || Math.abs(c - currC) > 1) {
+                return;
+            }
+
+            robots[activeRobot].r = r;
+            robots[activeRobot].c = c;
+        }
+    }
+
+    function getDestCoords() {
+        var destCoords = [];
+        for (const [colorStr, symbolCoords] of Object.entries(DESTINATIONS)) {
+            for (const [symbol, coords] of Object.entries(symbolCoords)) {
+                destCoords.push(coords);
+            }
+        }
+        return destCoords;
+    }
+    
+
+    Array.prototype.sample = function(){
+        return this[Math.floor(Math.random()*this.length)];
+    }
+
+    function drawRect(x, y, width, height, color) {
+        ctx.beginPath();
+        ctx.rect(x, y, width, height);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.closePath();
+    } 
+
+    function drawCells() {
+        for (var r = 0; r < CELL_ROW_COUNT; r++) {
+            for (var c = 0; c < CELL_ROW_COUNT; c++) {
+                var x = CELL_OFFSET + c * (CELL_WIDTH + CELL_PADDING);
+                var y = CELL_OFFSET + r * (CELL_WIDTH + CELL_PADDING);
+                // central squares are dark sand, rest are cream
+                var color = ((r === 7 || r === 8) && (c === 7 || c === 8)) ? SAND : CREAM;
+                drawRect(x, y, CELL_WIDTH, CELL_WIDTH, color);
+            }
+        }
+    }
+
+    function drawStartSquares() {
+        // where the robots started
+        for (const [colorStr, coords] of Object.entries(robots)) {
+            // drawRobot(coords.r, coords.c, colorStr);
+            var x = CELL_OFFSET + coords.startC * (CELL_WIDTH + CELL_PADDING);
+            var y = CELL_OFFSET + coords.startR * (CELL_WIDTH + CELL_PADDING);
+            drawRect(x, y, CELL_WIDTH, CELL_WIDTH, getColorFromString(colorStr));
+        }
+
+    } 
+
+    // lift: whether the wall should be "lifted" up so overlap happens on the top
+    function drawVertWall(r, c, lift) {
+        var x = CELL_OFFSET + c * (CELL_WIDTH + CELL_PADDING) - CELL_PADDING/2 - WALL_WIDTH/2;
+        var y = CELL_OFFSET + r * (CELL_WIDTH + CELL_PADDING);
+        if (lift) y -= WALL_WIDTH / 2;
+        drawRect(x, y, WALL_WIDTH, CELL_WIDTH + WALL_WIDTH/2, SAND);
+    }
+
+    // lift: whether wall should be "lifted" to the left so overlap happens on the left
+    function drawHorWall(r, c, lift) {
+        var x = CELL_OFFSET + c * (CELL_WIDTH + CELL_PADDING);
+        if (lift) x -= WALL_WIDTH / 2;
+        var y = CELL_OFFSET + r * (CELL_WIDTH + CELL_PADDING) - CELL_PADDING/2 - WALL_WIDTH / 2;
+        drawRect(x, y, CELL_WIDTH + WALL_WIDTH/2, WALL_WIDTH, SAND);
+    }
+
+    function drawWalls() {
+        for (var i = 0; i < VERT_WALLS.length; i++) {
+            const [r, c, lift] = VERT_WALLS[i];
+            drawVertWall(r, c, lift);
+        }
+        for (var i = 0; i < HOR_WALLS.length; i++) {
+            const [r, c, lift] = HOR_WALLS[i];
+            drawHorWall(r, c, lift);
+        }
+    }
+
+    // this is where the target symbol will go on top of
+    function drawCenterChip() {
+        // brown outer circle
+        ctx.beginPath();
+        var x = canvas.width / 2;
+        var y = canvas.height / 2;
+        ctx.arc(x, y, 24, 0, Math.PI*2);
+        ctx.fillStyle = "#8b4513";
+        ctx.fill();
+        ctx.closePath();
+        // whitish inner circle
+        ctx.beginPath();
+        ctx.arc(x, y, 22, 0, Math.PI*2);
+        ctx.fillStyle = "#fff8e7";
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawSymbol(r, c, text, color) {
+        var x = CELL_OFFSET + c * (CELL_WIDTH + CELL_PADDING) + CELL_WIDTH/2;
+        var y = CELL_OFFSET + r * (CELL_WIDTH + CELL_PADDING) + CELL_WIDTH/2;
+        if (text === '♥') y += 1; // heart looks better a bit lower
+        ctx.font = "32px Arial";
+        ctx.textAlign = 'center';
+        ctx.textBaseline = "middle"; 
+        ctx.fillStyle = color;
+        ctx.fillText(text, x, y);
+    }
+
+    function getColorFromString(colorStr) {
+        if (colorStr === 'RED') return RED;
+        if (colorStr === 'GREEN') return GREEN;
+        if (colorStr === 'BLUE') return BLUE;
+        if (colorStr === 'YELLOW') return YELLOW;
+        return 'black'; // shouldn't happen
+    }
+
+    function drawDestinations() {
+        for (const [colorStr, symbolCoords] of Object.entries(DESTINATIONS)) {
+            var color = getColorFromString(colorStr);
+            for (const [symbol, coords] of Object.entries(symbolCoords)) {
+                const [x, y] = coords;
+                drawSymbol(x, y, symbol, color);
+            }
+        }
+    }
+
+    function drawTarget(targetColorStr, targetSymbol) {
+        ctx.font = "42px Arial";
+        ctx.textAlign = 'center';
+        ctx.textBaseline = "middle"; 
+        ctx.fillStyle = getColorFromString(targetColorStr);
+        var y = canvas.height/2;
+        if (targetSymbol === '♥') y += 2; // heart looks better a bit lower
+        ctx.fillText(targetSymbol, canvas.width/2, y);
+    }
+
+    function getRandStart(invalidStartPoints) {
+        var invalidStartPointsStr = JSON.stringify(invalidStartPoints);
+        while (true) {
+            var r = Math.floor(Math.random() * CELL_ROW_COUNT);
+            var c = Math.floor(Math.random() * CELL_ROW_COUNT);
+            var pointStr = JSON.stringify([r, c]);
+            if (invalidStartPointsStr.indexOf(pointStr) === -1) {
+                return [r, c];
+            }
+        }
+    }
+
+    function initializeRobots() {
+        var robots = {};
+        // invalid starts: destinations, central 4 squares, and other start points.
+        var invalidStartPoints = DEST_COORDS.concat(CENTER_CELLS);
+        for (const color of COLORS) {
+            var [r, c] = getRandStart(invalidStartPoints);
+            robots[color] = {r: r, c: c, startR: r, startC: c};
+            invalidStartPoints.push([r, c]);
+        }
+        return robots;
+    }
+
+    function drawRobot(r, c, colorStr) {
+        var x = CELL_OFFSET + c * (CELL_WIDTH + CELL_PADDING) + CELL_WIDTH/2;
+        var y = CELL_OFFSET + r * (CELL_WIDTH + CELL_PADDING) + CELL_WIDTH/2;
+        ctx.beginPath();
+        ctx.arc(x, y, 15, 0, Math.PI*2);
+        ctx.fillStyle = getColorFromString(colorStr);
+        ctx.fill();
+        ctx.closePath();
+        // add central thing to make it more noticeable?
+
+        ctx.beginPath();
+        ctx.arc(x, y, 13, 0, Math.PI*2);
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.arc(x, y, 11, 0, Math.PI*2);
+        ctx.fillStyle = getColorFromString(colorStr);
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawRobots() {
+        for (const [colorStr, coords] of Object.entries(robots)) {
+            drawRobot(coords.r, coords.c, colorStr);
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawCells();
+        drawStartSquares();
+        drawWalls();
+        drawCenterChip();
+        drawDestinations();
+        drawTarget(targetColorStr, targetSymbol);
+        drawRobots(); 
+    }
+
+    // =====================================================
+    // ========== MAIN PROGRAM =============================
+    // =====================================================
+    // pick random color and symbol, and save this
+    var targetColorStr = COLORS.sample();
+    var targetSymbol = SYMBOLS.sample();
+    // object {color: {r, c, startR, startC}} for each robot
+    var robots = initializeRobots();
+    console.log('robots', robots);
+
+    // grid with invalid next r/c at each (r, c) pos. Ie, for wall in first row:
+    //  [[{}, {c:2}, {c:1}, {}], 
+    //  [{}, {}, {}, {}] ..];
+    // (note: doesn't currently enforce robots as "walls")
+    var bannedMoves = getBannedMoves();
+
+    // color str of active robot, or 'NONE'
+    var activeRobot = 'NONE';
+
+    // this repeatedly redraws every 10 milliseconds
+    setInterval(draw, 10);            
+</script>
+
+</body>
+</html>
