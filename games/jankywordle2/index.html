@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Comfortaa">
+  <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0"/>
+  <title>jankywordle2</title>
+</head>
+
+<!-- Credit for wordle game goes to the original creator:
+     https://www.nytimes.com/2022/01/03/technology/wordle-word-game-creator.html
+     This is my recreation from scratch for fun :) -->
+
+<body>
+
+  <div class="container">
+    <h3> <!-- apply colors -->
+      j
+      <span class="green">a</span>
+      <span class="yellow">n</span>
+      k
+      <span class="grey">y</span>
+      w o r d l e 2
+    </h3>
+    <div id="board" style="padding-top:10px;"></div>
+    <br />
+    <div id="message"></div>
+    <br />
+    <div id="keyboard">
+      <div class="row">
+        <button onclick="clickLetter('Q')" id="Q">Q</button>
+        <button onclick="clickLetter('W')" id="W">W</button>
+        <button onclick="clickLetter('E')" id="E">E</button>
+        <button onclick="clickLetter('R')" id="R">R</button>
+        <button onclick="clickLetter('T')" id="T">T</button>
+        <button onclick="clickLetter('Y')" id="Y">Y</button>
+        <button onclick="clickLetter('U')" id="U">U</button>
+        <button onclick="clickLetter('I')" id="I">I</button>
+        <button onclick="clickLetter('O')" id="O">O</button>
+        <button onclick="clickLetter('P')" id="P">P</button>
+      </div>
+      <div class="row">
+        <button onclick="clickLetter('A')" id="A">A</button>
+        <button onclick="clickLetter('S')" id="S">S</button>
+        <button onclick="clickLetter('D')" id="D">D</button>
+        <button onclick="clickLetter('F')" id="F">F</button>
+        <button onclick="clickLetter('G')" id="G">G</button>
+        <button onclick="clickLetter('H')" id="H">H</button>
+        <button onclick="clickLetter('J')" id="J">J</button>
+        <button onclick="clickLetter('K')" id="K">K</button>
+        <button onclick="clickLetter('L')" id="L">L</button>
+      </div>
+      <div class="row">
+        <button onclick="enter()" id="enter_button">ENTER</button>
+        <button onclick="clickLetter('Z')" id="Z">Z</button>
+        <button onclick="clickLetter('X')" id="X">X</button>
+        <button onclick="clickLetter('C')" id="C">C</button>
+        <button onclick="clickLetter('V')" id="V">V</button>
+        <button onclick="clickLetter('B')" id="B">B</button>
+        <button onclick="clickLetter('N')" id="N">N</button>
+        <button onclick="clickLetter('M')" id="M">M</button>
+        <button onclick="del()" id="del_button">⌫</button>
+      </div>
+    </div> <!-- end keyboard -->
+  </div> <!-- end container -->
+
+  <script type="text/javascript" src="words.js"></script>
+  <script>
+    // constants
+    const GREY = '#787C7E';
+    const GREEN = '#6AAA64';
+    const YELLOW = '#C9B458';
+    const RED = '#B22222';
+
+    const NROWS = 6;
+    const NCOLS = 5;
+
+    // Setup board
+    function setupBoard() {
+      const boardElem = document.getElementById("board");
+      for (var r = 0; r < NROWS; r++) {
+        var str = '<div class="row">';
+        for (var c = 0; c < NCOLS; c++) {
+          var idStr = r.toString() + '_' + c.toString();
+          str += '<div class="cell" id="' + idStr + '"></div>';
+        }
+        str += '</div>';
+        boardElem.innerHTML += str;
+      }
+      // Put all the grid dom elements into an array for easy access later.
+      var board = new Array(NROWS);
+      for (var r = 0; r < NROWS; r++) {
+        board[r] = new Array(NCOLS);
+        for (var c = 0; c < NCOLS; c++) {
+          var idStr = r.toString() + '_' + c.toString();
+          board[r][c] = document.getElementById(idStr);
+        }
+      }
+      return board;
+    }
+
+    function getAnswerWord() {
+      const idx = Math.floor(Math.random() * candidateWords_.length)
+      return candidateWords_[idx];
+    }
+
+    // Functions to handle events / interactions.
+    document.addEventListener('keypress', function(event) {
+      const key = event.key.toUpperCase(); // "a", "1", "Shift", etc.
+      if (key === 'ENTER') enter();
+      if (key.length === 1 && key.match(/[A-Z]/i)) clickLetter(key);
+    });
+    // for delete (not captured by keypress)
+    document.addEventListener('keydown', function(event) {
+      const key = event.key.toUpperCase();
+      if (key === 'BACKSPACE') del();
+    });
+
+    String.prototype.clearAtIndex = function(idx) {
+      return this.substr(0, idx) + '-' + this.substr(idx + 1);
+    }
+
+    function setMessage(msg, color) {
+      var message = document.getElementById("message");
+      message.innerHTML = msg;
+      if (msg.length > 0) message.style.color = color;
+    }
+
+    function getWinText() {
+      return 'marvelous! you solved jankywordle!';
+    }
+
+    function getLossText() {
+      return 'Squeak! The word was ' + answer_;
+    }
+
+    function isWord(w) {
+      return candidateWords_.includes(w) || otherWords_.includes(w);
+    }
+
+    // Only called after making a valid guess and updating
+    // keyColors accordingly.
+    function updateKeyColors() {
+      for (var i = 0; i < guess_.length; i++) {
+        var key = document.getElementById(guess_[i]);
+        var targetColor = keyColors_[guess_[i]];
+        key.style.backgroundColor = targetColor;
+      }
+    }
+
+    function colorCell(letterIdx, color) {
+      const cell = board_[currRow_][letterIdx];
+      cell.style.backgroundColor = color;
+      cell.style.color = 'white'; // make text white
+    }
+
+    function clickLetter(letter) {
+      // Remove focus so "enter" to submit word doesn't also trigger letter click.
+      document.activeElement.blur();
+      if (currCol_ >= NCOLS || gameover_) return;
+      board_[currRow_][currCol_].innerHTML = letter;
+      currCol_++;
+      guess_ += letter;
+    }
+
+    function del() {
+      if (currCol_ <= 0 || gameover_) return;
+      currCol_--;
+      board_[currRow_][currCol_].innerHTML = '';
+      guess_ = guess_.slice(0, -1);
+      // Reset message in case there was an error message.
+      if (currCol_ === NCOLS - 1) setMessage('');        
+    }
+
+    function enter() {
+      if (guess_.length !== NCOLS || gameover_) return;
+      if (!isWord(guess_)) {
+        setMessage('Not a word', RED);
+        return;
+      }
+      
+      // Note: we create a copy of the answer to mark out letters that are
+      // accounted for while processing guess. This prevents double-matching
+      // if the guess repeats a letter that appears less often in answer.
+      var answerCopy = answer_;
+      for (var i = 0; i < NCOLS; i++) {
+        const l = guess_[i];
+        console.log('letter:', l);
+        console.log(keyColors_);
+        if (l === answerCopy[i]) {
+          // Correct letter in correct spot.
+          colorCell(i, GREEN);
+          keyColors_[l] = GREEN;
+          answerCopy = answerCopy.clearAtIndex(i);
+        } else if (answerCopy.indexOf(l) !== -1) {
+          // Correct letter, but incorrect spot.
+          colorCell(i, YELLOW);
+          // Mark key as yellow unless a previous guess was green.
+          if (keyColors_[l] !== GREEN) {
+            keyColors_[l] = YELLOW;
+          }
+          answerCopy = answerCopy.clearAtIndex(answerCopy.indexOf(l));
+        } else {
+          // Letter not in answer.
+          colorCell(i, GREY);
+          // Mark key as grey unless previous guess was green/yellow.
+          if (keyColors_[l] !== GREEN && keyColors_[l] !== YELLOW) {
+            keyColors_[l] = GREY;
+          }
+        }
+      }
+
+      updateKeyColors();
+
+      // Check for end of game.
+      if (guess_ === answer_) {
+        gameover_ = true;
+        setMessage(getWinText(), GREEN);
+      } else if (currRow_ >= NROWS - 1) {
+        gameover_ = true;
+        setMessage(getLossText(), RED);
+      }
+
+      // maybe animation
+      if (gameover_ === true) {
+        animation();
+      }
+
+      // Update for next round.
+      currRow_ += 1;
+      currCol_ = 0;
+      guess_ = "";
+    }
+
+    function setCell(row, col, letter, color) {
+      const cell = board_[row][col];
+      cell.innerHTML = letter;
+      cell.style.backgroundColor = color;
+    }
+
+    function clearBoard() {
+      for (var r = 0; r < 6; r++) {
+        for (var c = 0; c < 5; c++) {
+          const cell = board_[r][c];
+          cell.innerHTML = '';
+          cell.style.backgroundColor = 'white';
+        }
+      }
+    }
+
+    function animation() {
+      setTimeout(() => { setMessage('Wait for it . . .', GREEN) }, 1000);
+
+      setTimeout(() => { clearBoard()   }, 2000);
+      setTimeout(() => { setMessage('') }, 2000);
+
+      setTimeout(() => { setCell(0, 0, 'H', GREEN) }, 2500);
+      setTimeout(() => { setCell(0, 1, 'A', GREEN) }, 3000);
+      setTimeout(() => { setCell(0, 2, 'P', GREEN) }, 3500);
+      setTimeout(() => { setCell(0, 3, 'P', GREEN) }, 4000);
+      setTimeout(() => { setCell(0, 4, 'Y', GREEN) }, 4500);
+
+      setTimeout(() => { setCell(1, 0, 'N', YELLOW) }, 5000);
+      setTimeout(() => { setCell(1, 1, 'E', YELLOW) }, 5500);
+      setTimeout(() => { setCell(1, 2, 'W', YELLOW) }, 6000);
+
+      setTimeout(() => { setCell(2, 1, 'Y', YELLOW) }, 6500);
+      setTimeout(() => { setCell(2, 2, 'E', YELLOW) }, 7000);
+      setTimeout(() => { setCell(2, 3, 'A', YELLOW) }, 7500);
+      setTimeout(() => { setCell(2, 4, 'R', YELLOW) }, 8000);
+
+      setTimeout(() => { setCell(3, 0, 'D', GREEN)  }, 8500);
+      setTimeout(() => { setCell(3, 1, 'A', GREEN)  }, 9000);
+      setTimeout(() => { setCell(3, 2, 'N', GREEN)  }, 9500);
+      setTimeout(() => { setCell(3, 3, 'I', GREEN)  }, 10000);
+
+      setTimeout(() => { setCell(4, 1, 'E', GREEN)  }, 10500);
+      setTimeout(() => { setCell(4, 2, 'L', GREEN)  }, 11000);
+      setTimeout(() => { setCell(4, 3, 'L', GREEN)  }, 11500);
+      setTimeout(() => { setCell(4, 4, 'A', GREEN)  }, 12000);
+
+      setTimeout(() => { 
+        setCell(1, 3, '', GREY); 
+        setCell(1, 4, '', GREY); 
+        setCell(2, 0, '', GREY);
+        setCell(3, 4, '', GREY);
+        setCell(4, 0, '', GREY);
+        setCell(5, 0, '', GREY);  
+        setCell(5, 1, '', GREY); 
+        setCell(5, 2, '', GREY);  
+        setCell(5, 3, '', GREY);
+      }, 12500);
+
+      setTimeout(() => { setCell(5, 4, '☆', YELLOW)  }, 13000);
+    }
+
+    // ---------------------------------------------
+    // ----- SETUP GAME ----------------------------
+    // ---------------------------------------------
+    var board_ = setupBoard();
+    const candidateWords_ = getCandidateWords();
+    const otherWords_ = getOtherWords();
+    
+    const answer_ = getAnswerWord();
+    console.log('answer', answer_);
+    var guess_ = "";
+
+    var currRow_ = 0;
+    var currCol_ = 0;
+    var gameover_ = false;
+    var keyColors_ = {};
+  </script> 
+
+</body>
