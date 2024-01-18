@@ -7,7 +7,7 @@
   <link rel="stylesheet" type="text/css" href="style.css"/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Comfortaa">
   <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0"/>
-  <title>jankypalabra</title>
+  <title>wordle espanol</title>
 </head>
 
 <!-- Credit for wordle game goes to the original creator:
@@ -18,12 +18,13 @@
 
   <div class="container">
     <h3> <!-- apply colors -->
-      j
-      <span class="green">a</span>
-      <span class="yellow">n</span>
-      k
-      <span class="grey">y</span>
-      p a l a b r a
+      w
+      <span class="green">o</span>
+      <span class="yellow">r</span>
+      d
+      <span class="green">l</span>
+      <span class="yellow">e</span>
+      <span class="grey">español</span>
     </h3>
     <div id="board" style="padding-top:10px;"></div>
     <br />
@@ -61,6 +62,8 @@
         <button onclick="clickLetter('V')" id="V">V</button>
         <button onclick="clickLetter('B')" id="B">B</button>
         <button onclick="clickLetter('N')" id="N">N</button>
+        <!-- for spanish also need Ñ with tilde -->
+        <button onclick="clickLetter('Ñ')" id="Ñ">Ñ</button>
         <button onclick="clickLetter('M')" id="M">M</button>
         <button onclick="del()" id="del_button">⌫</button>
       </div>
@@ -130,11 +133,11 @@
     }
 
     function getWinText() {
-      return 'marvelous! you solved jankywordle!';
+      return 'qué bien!';
     }
 
     function getLossText() {
-      return 'Squeak! The word was ' + answer_;
+      return 'ah! la palabra era ' + answer_;
     }
 
     function isWord(w) {
@@ -178,7 +181,7 @@
     function enter() {
       if (guess_.length !== NCOLS || gameover_) return;
       if (!isWord(guess_)) {
-        setMessage('Not a word', RED);
+        setMessage('No es una palabra', RED);
         return;
       }
       
