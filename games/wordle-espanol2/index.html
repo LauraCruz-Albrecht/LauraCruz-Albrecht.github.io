@@ -139,7 +139,11 @@
       var defLink = document.getElementById("definition_link");
       defLink.innerHTML = "(definición)";
       defLink.href = "https://www.wordreference.com/definicion/" + answer_;
-      
+    }
+
+    function removeDefinitionLink() {
+      var defLink = document.getElementById("definition_link");
+      defLink.innerHTML = "";
     }
 
     function getWinText() {
@@ -147,7 +151,7 @@
     }
 
     function getLossText() {
-      return 'ah! la palabra era ' + answer_;
+      return 'la palabra era ' + answer_;
     }
 
     function isWord(w) {
@@ -255,6 +259,7 @@
       const cell = board_[row][col];
       cell.innerHTML = letter;
       cell.style.backgroundColor = color;
+      cell.style.color = 'white'; // make text white
     }
 
     function clearBoard() {
@@ -268,26 +273,31 @@
     }
 
     function animation() {
-      setTimeout(() => { setMessage('e s p e r a . . .', GREEN) }, 1000);
+      setTimeout(() => { 
+        setMessage('e s p e r a . . .', GREEN);
+        removeDefinitionLink();
+      }, 1000);
 
-      setTimeout(() => { clearBoard()   }, 2000);
-      setTimeout(() => { setMessage('') }, 2000);
+      setTimeout(() => {
+        clearBoard();  
+        setMessage('')
+      }, 3000);
 
-      setTimeout(() => { setCell(0, 0, 'H', YELLOW) }, 2500);
-      setTimeout(() => { setCell(0, 1, 'O', YELLOW) }, 3000);
-      setTimeout(() => { setCell(0, 2, 'L', YELLOW) }, 3500);
-      setTimeout(() => { setCell(0, 3, 'A', YELLOW) }, 4000);
-      setTimeout(() => { setCell(0, 4, ' ', GREY) },  4500);
+      setTimeout(() => { setCell(0, 0, 'H', YELLOW) }, 3500);
+      setTimeout(() => { setCell(0, 1, 'O', YELLOW) }, 4000);
+      setTimeout(() => { setCell(0, 2, 'L', YELLOW) }, 4500);
+      setTimeout(() => { setCell(0, 3, 'A', YELLOW) }, 5000);
+      setTimeout(() => { setCell(0, 4, ' ', GREY)   }, 5500);
 
-      setTimeout(() => { setCell(1, 0, 'K', GREEN) }, 5000);
-      setTimeout(() => { setCell(1, 1, 'A', GREEN) }, 5500);
-      setTimeout(() => { setCell(1, 2, 'T', GREEN) }, 6000);
-      setTimeout(() => { setCell(1, 3, 'H', GREEN) }, 6500);
-      setTimeout(() => { setCell(1, 4, 'A', GREEN) }, 7000);
-      setTimeout(() => { setCell(2, 1, 'R', GREEN) }, 7500);
-      setTimeout(() => { setCell(2, 2, 'I', GREEN) }, 8000);
-      setTimeout(() => { setCell(2, 3, 'N', GREEN) }, 8500);
-      setTimeout(() => { setCell(2, 4, 'A', GREEN) }, 9000);
+      setTimeout(() => { setCell(1, 0, 'K', GREEN) }, 6000);
+      setTimeout(() => { setCell(1, 1, 'A', GREEN) }, 6500);
+      setTimeout(() => { setCell(1, 2, 'T', GREEN) }, 7000);
+      setTimeout(() => { setCell(1, 3, 'H', GREEN) }, 7500);
+      setTimeout(() => { setCell(1, 4, 'A', GREEN) }, 8000);
+      setTimeout(() => { setCell(2, 1, 'R', GREEN) }, 8500);
+      setTimeout(() => { setCell(2, 2, 'I', GREEN) }, 9000);
+      setTimeout(() => { setCell(2, 3, 'N', GREEN) }, 9500);
+      setTimeout(() => { setCell(2, 4, 'A', GREEN) }, 10000);
       setTimeout(() => { 
         setCell(2, 0, '', GREY); 
         setCell(3, 0, '', GREY); 
@@ -304,8 +314,8 @@
         setCell(5, 1, '', GREY);
         setCell(5, 2, '', GREY);
         setCell(5, 3, '', GREY);
-      }, 9500);
-      setTimeout(() => { setCell(5, 4, '☆', YELLOW)  }, 10000);
+      }, 10500);
+      setTimeout(() => { setCell(5, 4, '☆', YELLOW)  }, 11000);
     }
 
     // ---------------------------------------------
