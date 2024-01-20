@@ -28,7 +28,10 @@
     </h3>
     <div id="board" style="padding-top:10px;"></div>
     <br />
-    <div id="message"></div>
+    <div class="msg_container">
+      <span id="message"></span>
+      <a id="definition_link" target="_blank"></a>
+    </div>
     <br />
     <div id="keyboard">
       <div class="row">
@@ -132,6 +135,13 @@
       if (msg.length > 0) message.style.color = color;
     }
 
+    function setDefinitionLink() {
+      var defLink = document.getElementById("definition_link");
+      defLink.innerHTML = "(definición)";
+      defLink.href = "https://www.wordreference.com/definicion/" + answer_;
+      
+    }
+
     function getWinText() {
       return 'qué bien!';
     }
@@ -222,9 +232,11 @@
       if (guess_ === answer_) {
         gameover_ = true;
         setMessage(getWinText(), GREEN);
+        setDefinitionLink();
       } else if (currRow_ >= NROWS - 1) {
         gameover_ = true;
         setMessage(getLossText(), RED);
+        setDefinitionLink();
       }
 
       // maybe animation

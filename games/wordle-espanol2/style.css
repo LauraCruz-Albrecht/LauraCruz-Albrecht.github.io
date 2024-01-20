@@ -79,7 +79,7 @@ button:hover {
   cursor: pointer;  /* cursor becomes hand */
 }
 
-#message {
+.msg_container {
   font-size: 13px;
-  height: 13px;
+  height:13px;
 }
