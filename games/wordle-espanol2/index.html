@@ -199,6 +199,7 @@
         return;
       }
       
+      // MATCHING LOGIC - APPROACH #1
       // Note: we create a copy of the answer to mark out letters that are
       // accounted for while processing guess. This prevents double-matching
       // if the guess repeats a letter that appears less often in answer.
@@ -213,6 +214,59 @@
           keyColors_[l] = GREEN;
           answerCopy = answerCopy.clearAtIndex(i);
         } else if (answerCopy.indexOf(l) !== -1) {
+          // Correct letter, but incorrect spot.
+          colorCell(i, YELLOW);
+          // Mark key as yellow unless a previous guess was green.
+          if (keyColors_[l] !== GREEN) {
+            keyColors_[l] = YELLOW;
+          }
+          answerCopy = answerCopy.clearAtIndex(answerCopy.indexOf(l));
+        } else {
+          // Letter not in answer.
+          colorCell(i, GREY);
+          // Mark key as grey unless previous guess was green/yellow.
+          if (keyColors_[l] !== GREEN && keyColors_[l] !== YELLOW) {
+            keyColors_[l] = GREY;
+          }
+        }
+      }
+
+      // MATCHING LOGIC - APPROACH #2
+      // Updated to give the most info possible when the guess repeats a letter.
+      // Consider case where letter appears once in answer but guess repeats
+      // the letter twice, and the second instance is in the right spot
+      // we can either:
+      // 1. mark the first letter as yellow, and second as grey (what logic above does)
+      //    however, a bit misleading since the second grey letter is in fact
+      //    the right letter in the right spot
+      // 2. or, mark the first guess grey, and the second green
+      //    this gives more info - logic below implements this approach insted
+      // 
+      // To do this, we iterate through the guess twice, first to identify
+      // any exact matches, and then a second time to mark remaining 
+      // letters as either yellow or grey.
+      var answerCopy = answer_;
+      var exactMatchIndices = [];
+      // First loop to identify exact matches.
+      for (var i = 0; i < NCOLS; i++) {
+        const l = guess_[i];
+        if (l === answerCopy[i]) {
+          // Correct letter in correct spot.
+          colorCell(i, GREEN);
+          keyColors_[l] = GREEN;
+          answerCopy = answerCopy.clearAtIndex(i);
+          exactMatchIndices.push(i);
+        }
+      }
+      // Second loop to mark remaining characters in the guess
+      // as either yellow or grey. 
+      for (var i = 0; i < NCOLS; i++) {
+        if (exactMatchIndices.includes(i)) {
+          // Already processed this index as exact match earlier.
+          continue;
+        }
+        const l = guess_[i];    
+        if (answerCopy.indexOf(l) !== -1) {
           // Correct letter, but incorrect spot.
           colorCell(i, YELLOW);
           // Mark key as yellow unless a previous guess was green.
