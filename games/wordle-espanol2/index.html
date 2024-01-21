@@ -236,11 +236,11 @@
       if (guess_ === answer_) {
         gameover_ = true;
         setMessage(getWinText(), GREEN);
-        setDefinitionLink();
+        // setDefinitionLink();
       } else if (currRow_ >= NROWS - 1) {
         gameover_ = true;
         setMessage(getLossText(), RED);
-        setDefinitionLink();
+        // setDefinitionLink();
       }
 
       // maybe animation
@@ -276,7 +276,7 @@
       setTimeout(() => { 
         setMessage('e s p e r a . . .', GREEN);
         removeDefinitionLink();
-      }, 1000);
+      }, 1500);
 
       setTimeout(() => {
         clearBoard();  
