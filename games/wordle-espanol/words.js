@@ -20,7 +20,38 @@
 //    the candidates as well.
 
 function getCandidateWords() {
-	let candidateWords = ["verde","feliz", "mucho", "vivir", "coche", "cerca", "papel", "nieve", "fruta", "linda", "noche", "libro", "tejer"]
+	let candidateWords = [
+		"abeja",
+		"aereo",
+		"arena",
+		"arbol",
+		"bolsa",
+		"bueno",
+		"cielo",
+		"clima",
+		"deseo",
+		"feliz",
+		"fruta",
+		"globo",
+		"juego",
+		"libro", 
+		"limon",
+		"linda", 
+		"magia",
+		"mundo",
+		"nieve", 
+		"noche",
+		"papel", 
+		"playa",
+		"pluma",
+		"punto",
+		"reina",
+		"siglo",
+		"tarde",
+		"tejer",
+		"viaje",
+		"vista",
+	]
 	candidateWords = candidateWords.map(word => word.toUpperCase());
 	console.log('candidateWords', candidateWords.length);
 	return candidateWords;
