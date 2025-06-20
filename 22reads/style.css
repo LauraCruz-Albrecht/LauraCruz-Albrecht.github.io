@@ -21,6 +21,10 @@ h1 {
   margin-bottom: 10px;
 }
 
+.comic {
+  color: lightgrey;
+}
+
 .book_container {
   width: 90%;
   margin: auto;    /* center horizontally */
