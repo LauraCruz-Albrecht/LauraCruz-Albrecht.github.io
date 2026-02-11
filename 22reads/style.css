@@ -25,6 +25,10 @@ h1 {
   color: lightgrey;
 }
 
+.gay {
+  color: #B8860B;
+}
+
 .book_container {
   width: 90%;
   margin: auto;    /* center horizontally */
