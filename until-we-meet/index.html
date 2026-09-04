@@ -224,14 +224,14 @@
       <div class="unit"><div class="num" id="s">00</div><div class="lab">seconds</div></div>
     </div>
 
-    <div class="when" id="when">Monday, July 20 · 4:30 PM</div>
+    <div class="when" id="when">Monday, September 7 · 6:34 PM</div>
     <div class="where">New York time</div>
   </main>
 
 <script>
   // The exact moment, pinned to New York (EDT, −04:00).
   // Stored as an absolute instant, so the countdown is correct in any timezone.
-  const TARGET = new Date('2026-07-20T16:30:00-04:00').getTime();
+  const TARGET = new Date('2026-09-07T18:34:00-04:00').getTime();
 
   const elD = document.getElementById('d');
   const elH = document.getElementById('h');
@@ -245,8 +245,8 @@
     reunited = true;
     document.body.classList.add('reunited');
     document.getElementById('clock').style.display = 'none';
-    document.getElementById('when').textContent = "bienvenida mi amor";
-    document.querySelector('.where').textContent = "un besito, un beso, y un besote ♡";
+    document.getElementById('when').textContent = "bienvenue, mon petit chou";
+    document.querySelector('.where').textContent = "o mejor dicho: bienvenida, mi querida alcachofa ♡";
     const b = document.getElementById('bloom');
     b.classList.add('go');
   }
