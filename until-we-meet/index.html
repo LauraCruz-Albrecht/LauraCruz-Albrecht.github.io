@@ -252,8 +252,8 @@
   }
 
   function tick(){
-    // const diff = TARGET - Date.now();
-    const diff = 0;
+    const diff = TARGET - Date.now();
+    // const diff = 0;
     if(diff <= 0){ reunite(); return; }
     const s = Math.floor(diff/1000);
     elD.textContent = pad(Math.floor(s/86400));
